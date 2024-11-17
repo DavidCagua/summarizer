@@ -48,7 +48,6 @@ describe('Cloudflare Worker', () => {
 		const response = await worker.fetch(request, env);
 
 		// Check if the response is defined
-		console.log('Response:', response);  // Should not be undefined if the worker function completes properly
 
 		if (response) {
 			const responseBody: WorkerResponse = await response.json();
@@ -94,7 +93,6 @@ describe('Cloudflare Worker', () => {
     const response = await worker.fetch(request, env);
 
     const responseBody: WorkerResponse = await response.json();
-		console.log(responseBody);
 
     expect(response.status).toBe(400);
     expect(responseBody.error?.message).toBe('Bad Request');

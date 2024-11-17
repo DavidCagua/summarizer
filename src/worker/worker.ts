@@ -38,7 +38,6 @@ export default {
 		  return errorResponse; // Ensure the response is returned
 		}
 
-		console.log('Valid URL, processing content...');
 		const content = await fetchContentFromUrl(url);
 		const options: SummaryOptions = {
 		  word_count: summary_options?.word_count || 100,

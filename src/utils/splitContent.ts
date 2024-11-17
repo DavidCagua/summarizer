@@ -17,7 +17,6 @@ export function splitContentIntoChunks(
 	  // Default split based on token count
 	  return content.match(new RegExp(`(.|\\s){1,${maxTokens}}`, 'g')) || [];
 	}
-	console.log('hola');
 
 	const sentences = content.split(/(?<=[.!?])\s+/); // Split by sentence
 	const chunks: string[] = [];
