@@ -8,19 +8,26 @@ describe("fetchContentFromUrl", () => {
     vi.restoreAllMocks();
   });
 
-  it("should return content when the fetch is successful", async () => {
-    const mockContent = "Hello, World!";
-    (fetch as vi.Mock).mockResolvedValue({
-      ok: true,
-      text: vi.fn().mockResolvedValue(mockContent),
-    });
+	it("should return content when the fetch is successful", async () => {
+		const mockContent = "Hello, World!";
 
-    const url = "https://example.com";
-    const result = await fetchContentFromUrl(url);
+		// Properly mock the response, including headers
+		(fetch as vi.Mock).mockResolvedValue({
+			ok: true,
+			status: 200,
+			statusText: "OK",
+			headers: new Headers({
+				'Content-Type': 'text/plain',  // Mocking the Content-Type header
+			}),
+			text: vi.fn().mockResolvedValue(mockContent),
+		});
 
-    expect(result).toBe(mockContent);
-    expect(fetch).toHaveBeenCalledWith(url);
-  });
+		const url = "https://example.com";
+		const result = await fetchContentFromUrl(url);
+
+		expect(result).toBe(mockContent);
+		expect(fetch).toHaveBeenCalledWith(url);
+	});
 
   it("should throw an error when fetch returns a non-OK status", async () => {
     (fetch as vi.Mock).mockResolvedValue({

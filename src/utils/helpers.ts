@@ -20,23 +20,44 @@ export function createErrorResponse(code: number, message: string, moreInfo?: st
 
 
 
-  /**
-   * Validates if the provided string is a valid URL.
-   *
-   * @param {string} string - The URL to validate.
-   * @returns {boolean} - Returns `true` if the URL is valid, otherwise `false`.
-   */
-  export function isValidUrl(string: string): boolean {
 
-	try {
-	  const url = new URL(string);
-	  // Check if the URL has a scheme (http:// or https://)
+/**
+ * Validates if the provided string is a valid URL.
+ *
+ * @param {string} string - The URL to validate.
+ * @returns {boolean} - Returns `true` if the URL is valid, otherwise `false`.
+ */
+export function isValidUrl(string: string): boolean {
+  try {
+    const url = new URL(string);
+    const hostname = url.hostname;
 
-	  return url.protocol === 'http:' || url.protocol === 'https:';
-	} catch (_) {
-	  return false;
-	}
+    // Check if the URL has a scheme (http:// or https://)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return false;
+    }
+
+    // Reject local addresses (localhost, 127.x.x.x, private IP ranges)
+    if (
+      hostname === 'localhost' ||
+      /^127\./.test(hostname) ||
+      /^10\./.test(hostname) ||
+      /^192\.168\./.test(hostname)
+    ) {
+      return false;
+    }
+
+    // Reject URL shorteners (e.g., bit.ly, goo.gl)
+    const shortenerDomains = ['bit.ly', 'goo.gl', 't.co'];
+    if (shortenerDomains.includes(hostname)) {
+      return false;
+    }
+
+    return true;
+  } catch (_) {
+    return false;
   }
+}
 
 
   /**
