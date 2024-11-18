@@ -33,6 +33,7 @@ export default {
       } catch (error) {
         return createErrorResponse(400, "Bad Request", "Request body is missing or invalid.");
       }
+	  console.log('hola :'+ env);
 
       const { url, summary_options }: RequestData = requestData;
 
@@ -52,7 +53,6 @@ export default {
       if (!env.OPENAI_API_KEY) {
         return createErrorResponse(500, "API Key Missing", "OpenAI API key is not configured.");
       }
-	  console.log('hola :'+env.OPENAI_API_KEY);
 
       const summary = await generateSummary(content, options, env.OPENAI_API_KEY);
       return new Response(JSON.stringify({ summary }), {
