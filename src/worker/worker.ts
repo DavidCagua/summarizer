@@ -1,23 +1,26 @@
-// src/worker/worker.ts
+import { RequestData, SummaryOptions, Env } from "../interfaces";
+import { fetchContentFromUrl } from "../utils/fetchContent";
+import { generateSummary } from "../utils/generateSummary";
+import { createErrorResponse, isValidUrl } from "../utils/helpers";
 
-import { RequestData, SummaryOptions, Env } from '../interfaces';
-import { fetchContentFromUrl } from '../utils/fetchContent';
-import { generateSummary } from '../utils/generateSummary';
-import { createErrorResponse, isValidUrl } from '../utils/helpers';
-
-/**
- * Main handler for the Cloudflare Worker.
- * Accepts a URL and summary preferences, retrieves content, and returns a summary.
- *
- * @param {RequestData} request - The request data containing the URL and summary options.
- * @param {Env} env - The environment variables, including the OpenAI API key.
- * @returns {Response} - The response containing the summary or error message.
- */
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     try {
+      const { pathname } = new URL(request.url);
+
+      // Use rate limiter
+      const limitResult = await env.RATE_LIMITER.limit({ key: pathname });
+		console.log(limitResult)
+      if (!limitResult.success) {
+        return createErrorResponse(
+          429,
+          "Too Many Requests",
+          `Rate limit exceeded for ${pathname}`
+        );
+      }
+
       // Only allow POST requests
-      if (request.method !== 'POST') {
+      if (request.method !== "POST") {
         return createErrorResponse(405, "Method Not Allowed", "Only POST requests are allowed.");
       }
 
@@ -38,8 +41,7 @@ export default {
 
       // Validate the URL
       if (!url || !isValidUrl(url)) {
-        const errorResponse = createErrorResponse(400, "Invalid URL", "Please provide a valid URL.");
-        return errorResponse; // Ensure the response is returned
+        return createErrorResponse(400, "Invalid URL", "Please provide a valid URL.");
       }
 
       const content = await fetchContentFromUrl(url);

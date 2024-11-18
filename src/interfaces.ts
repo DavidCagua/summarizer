@@ -10,12 +10,13 @@ export interface RequestData {
 
   export interface Env {
 	OPENAI_API_KEY: string;
+	RATE_LIMITER: any;
   }
 
   export interface OpenAIResponse {
 	choices: { message: { content: string } }[];
   }
-  interface ApiErrorResponse {
+  export interface ApiErrorResponse {
 	error: {
 	  message: string;
 	};
