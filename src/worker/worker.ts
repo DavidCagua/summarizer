@@ -33,7 +33,7 @@ export default {
       } catch (error) {
         return createErrorResponse(400, "Bad Request", "Request body is missing or invalid.");
       }
-	  console.log('hola :'+ env);
+	  console.log('hola :'+ JSON.stringify(env));
 
       const { url, summary_options }: RequestData = requestData;
 
