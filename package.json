@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-		"deploy": "npm install -g wrangler && cp wrangler.toml.template wrangler.toml && npx wrangler secret put MY_SECRET_KEY && npx wrangler deploy",
+    "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
